@@ -13,7 +13,7 @@
   </tr>
   <tr>
     <td valign="top">
-      <a href="https://nuclear-tech-new-horizons.github.io">🌍 Website (UNDER CONSTRUCTION)</a><br>
+      <a href="https://ntnewhorizons.github.io">🌍 Website (UNDER CONSTRUCTION)</a><br>
       <a href="https://discord.gg/wtNVzeE5QB">📬 Discord</a><br>
       <a href="https://github.com/Nuclear-Tech-New-Horizons/NTNH/releases">🔧 Download page</a><br>
       <a href="https://github.com/Nuclear-Tech-New-Horizons/NTNH/tree/server">🖥️ Server downloads</a><br>
