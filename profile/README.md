@@ -1,5 +1,5 @@
 <p align="center">
-    <img width="20%" max-height="20%" src="https://github.com/NTNewHorizons/.github/blob/89bcea69d2673b514b9cd7b248ee3f46eba77acc/profile/high-1749143837.jpg">
+    <img width="20%" max-height="20%" src="https://github.com/NTNewHorizons/.github/blob/1189071962840dc20b8feb4197f73384a1db3349/profile/icon_empty_SD.png">
 </p>
 
 <h2 align="center">Welcome to the Nuclear Tech: New Horizons Github organisation!</h2>
