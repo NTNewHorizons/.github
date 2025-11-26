@@ -4,7 +4,49 @@
 
 <h2 align="center">Welcome to the Nuclear Tech: New Horizons Github organisation!</h2>
 
+<p align="center">
+    <strong>A hardcore quest-based modpack for Minecraft 1.7.10</strong>, inspired by the legendary GTNH, but with a unique approach to progression and survival!
+</p>
 
+<blockquote align="center">
+    <strong>🔥 300+ deep quests</strong> will guide you from a stone axe to interstellar technologies, unlocking new technologies and possibilities at every step of the journey.
+</blockquote>
+
+<blockquote align="center">
+    <strong>⚙️ Full NTM integration</strong> - nearly all recipes have been reworked to align with the Nuclear Tech philosophy, creating a balanced and logical progression path.
+</blockquote>
+
+<blockquote align="center">
+    <strong>⚔️ A true challenge:</strong> The revised hunger system demands varied nutrition, mobs are smarter and deadlier, and new bosses will test your skills to their absolute limits.
+</blockquote>
+
+<p align="center">
+    <strong>🌟 Key features:</strong>
+    <ul align="center">
+        <li><strong>📅 Monthly updates</strong> - we continuously add content, fix bugs, and improve balance</li>
+        <li><strong>🌍 Multilingual support</strong> - translations into 20+ languages via our Crowdin project</li>
+        <li><strong>🚀 Optimization</strong> - Angelica + ArchaicFix for smooth gameplay even on low-end PCs</li>
+        <li><strong>🌌 Space exploration</strong> - new dimensions and technologies to conquer the universe</li>
+    </ul>
+</p>
+
+<p align="center">
+    <strong>💡 Perfect for players who value:</strong>
+    <ul align="center">
+        <li>Deep gameplay and strategic planning</li>
+        <li>Real achievements and a sense of progression</li>
+        <li>Hardcore experiences with thoughtful difficulty</li>
+        <li>An active community and constant development</li>
+    </ul>
+</p>
+
+<p align="center">
+    <strong>Are you ready to take on the New Horizons challenge?</strong> 🌠
+</p>
+
+<p align="center">
+    <em>Inspired by the spirit of GTNH, but with a unique NTM style!</em> ✨
+</p>
 
 <table align="center">
   <tr>
