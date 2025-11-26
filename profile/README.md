@@ -63,7 +63,7 @@
     <td valign="top">
       <a href="https://github.com/NTNewHorizons/NTNH/issues/new/choose">🐞 Open a new issue</a><br>
       <a href="https://github.com/pulls?q=is%3Aopen+is%3Apr+org%3ANTNewHorizons+archived%3Afalse+draft%3Afalse">🛠️ View all open pull requests</a><br>
-      <a href="https://github.com/GTNewHorizons/GTNH-Dev-Doc/blob/master/developer's%20code%20of%20conduct.md">📜 Developer's Code of Conduct</a><br>
+      <a href="https://github.com/NTNewHorizons/NTNH-Docs/blob/main/DEVELOPERS_CODE_OF_CONDUCT">📜 Developer's Code of Conduct</a><br>
       <a href="https://crowdin.com/project/ntnh">📑 Translation project on Crowdin</a><br>
     </td>
   </tr>
