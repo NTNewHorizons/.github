@@ -1,0 +1,42 @@
+Kerbol System
+
+	Moho
+	
+	Eve
+		? Gilly
+		
+	Kerbin
+		Mun
+		Minmus
+	
+	Duna
+		Ike
+		
+	Dres
+	
+	Jool
+		Laythe
+		Vall			//probably
+		Tylo			// what value is this planet gonna add???
+		Bop
+		Pol
+		
+	Sarnus
+		? Hale			//no
+		? Ovok			//nah
+		Eeloo			//will add
+		Slate			//not you tho
+		Tekto
+	
+	Urlum
+		? Polta
+		Priax
+		Wal
+			? Tal
+	
+	Neidon
+		Thatmo
+		? Nissee	    // words cannot express how much i actually fear this moon whenever im passing by it when playing opm. theres more that meets the eye and no one is brave enough to admit that
+		
+	Plock
+		Karen
