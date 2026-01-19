@@ -68,3 +68,11 @@
     </td>
   </tr>
 </table>
+
+
+<h3 align="center">Our lovely contributors!</h3>
+<p align="center">
+  <a href="https://github.com/NTNewHorizons/NTNH/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=NTNewHorizons/NTNH" />
+  </a>
+</p>
