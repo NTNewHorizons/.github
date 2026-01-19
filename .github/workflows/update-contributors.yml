@@ -79,6 +79,7 @@ jobs:
             
             // Generate HTML
             let html = '<p align="center">\n  <strong>🌟 Our Amazing Contributors 🌟</strong><br><br>\n';
+            let html = '<p align="center">\n  <strong>People who contributet to the modpack directly or to the mods we use in our modpack</strong><br><br>\n';
             
             for (const contributor of sortedContributors) {
               html += `  <a href="${contributor.html_url}">\n`;
@@ -122,6 +123,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "🤖 Auto-update contributors list"
+            git commit -m "Auto-update contributors list"
             git push
           fi
