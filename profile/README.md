@@ -73,7 +73,8 @@
 
 <!-- CONTRIBUTORS_START -->
 <p align="center">
-  <strong>🌟 Our Amazing Contributors 🌟</strong><br><br>
+  <strong>🌟 Our Amazing Contributors 🌟</strong><br>
+  <strong>People who contributed to the modpack directly or to the mods we use in our modpack</strong><br><br>
   <a href="https://github.com/HbmMods">
     <img src="https://avatars.githubusercontent.com/u/16674258?v=4" width="50" height="50" alt="HbmMods" title="HbmMods (3379 contributions)" style="border-radius: 50%; margin: 5px;" />
   </a>
