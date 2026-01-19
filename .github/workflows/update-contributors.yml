@@ -1,0 +1,127 @@
+name: Update Contributors
+
+on:
+  schedule:
+    # Run every day at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  update-contributors:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Fetch all contributors
+        id: fetch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const org = 'NTNewHorizons';
+            
+            // Fetch all repositories in the organization
+            const { data: repos } = await github.rest.repos.listForOrg({
+              org: org,
+              type: 'public',
+              per_page: 100
+            });
+            
+            console.log(`Found ${repos.length} repositories`);
+            
+            // Collect all contributors from all repos
+            const contributorMap = new Map();
+            
+            for (const repo of repos) {
+              try {
+                const { data: contributors } = await github.rest.repos.listContributors({
+                  owner: org,
+                  repo: repo.name,
+                  per_page: 100
+                });
+                
+                for (const contributor of contributors) {
+                  if (contributor.type === 'User') {
+                    if (contributorMap.has(contributor.login)) {
+                      contributorMap.get(contributor.login).contributions += contributor.contributions;
+                    } else {
+                      contributorMap.set(contributor.login, {
+                        login: contributor.login,
+                        avatar_url: contributor.avatar_url,
+                        html_url: contributor.html_url,
+                        contributions: contributor.contributions
+                      });
+                    }
+                  }
+                }
+                
+                console.log(`Fetched ${contributors.length} contributors from ${repo.name}`);
+              } catch (error) {
+                console.log(`Error fetching contributors for ${repo.name}: ${error.message}`);
+              }
+            }
+            
+            // Sort by contributions (descending)
+            const sortedContributors = Array.from(contributorMap.values())
+              .sort((a, b) => b.contributions - a.contributions);
+            
+            console.log(`Total unique contributors: ${sortedContributors.length}`);
+            
+            // Generate HTML
+            let html = '<p align="center">\n  <strong>🌟 Our Amazing Contributors 🌟</strong><br><br>\n';
+            
+            for (const contributor of sortedContributors) {
+              html += `  <a href="${contributor.html_url}">\n`;
+              html += `    <img src="${contributor.avatar_url}" width="50" height="50" alt="${contributor.login}" title="${contributor.login} (${contributor.contributions} contributions)" style="border-radius: 50%; margin: 5px;" />\n`;
+              html += `  </a>\n`;
+            }
+            
+            html += '</p>\n';
+            
+            // Write to file
+            const fs = require('fs');
+            fs.writeFileSync('contributors.html', html);
+            
+            return { count: sortedContributors.length };
+      
+      - name: Update README
+        run: |
+          # Read the generated HTML
+          CONTRIBUTORS_HTML=$(cat contributors.html)
+          
+          # Create temporary file
+          cp profile/README.md profile/README.md.tmp
+          
+          # Replace content between markers
+          awk -v html="$CONTRIBUTORS_HTML" '
+            BEGIN { in_section=0 }
+            /<!-- CONTRIBUTORS_START -->/ { print; print html; in_section=1; next }
+            /<!-- CONTRIBUTORS_END -->/ { in_section=0 }
+            !in_section { print }
+          ' profile/README.md.tmp > profile/README.md
+          
+          rm profile/README.md.tmp contributors.html
+      
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add profile/README.md
+          
+          # Check if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🤖 Auto-update contributors list"
+            git push
+          fi
