@@ -78,9 +78,8 @@ jobs:
             console.log(`Total unique contributors: ${sortedContributors.length}`);
             
             // Generate HTML
-            let html = '<p align="center">\n  <strong>🌟 Our Amazing Contributors 🌟</strong><br><br>\n';
-            let html = '<p align="center">\n  <strong>People who contributet to the modpack directly or to the mods we use in our modpack</strong><br><br>\n';
-            
+            let html = '<p align="center">\n  <strong>🌟 Our Amazing Contributors 🌟</strong><br>\n  <strong>People who contributed to the modpack directly or to the mods we use in our modpack</strong><br><br>\n';
+
             for (const contributor of sortedContributors) {
               html += `  <a href="${contributor.html_url}">\n`;
               html += `    <img src="${contributor.avatar_url}" width="50" height="50" alt="${contributor.login}" title="${contributor.login} (${contributor.contributions} contributions)" style="border-radius: 50%; margin: 5px;" />\n`;
