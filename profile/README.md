@@ -75,13 +75,12 @@
 
 <!-- CONTRIBUTORS_START -->
 <p align="center">
-  <strong>🌟 Our Amazing Contributors 🌟</strong><br>
-  <strong>People who contributed to the modpack directly or to the mods we use in our modpack</strong><br><br>
+  <strong>🌟 Our Amazing Contributors 🌟</strong><br><br>
   <a href="https://github.com/HbmMods">
     <img src="https://avatars.githubusercontent.com/u/16674258?v=4" width="50" height="50" alt="HbmMods" title="HbmMods (3379 contributions)" style="border-radius: 50%; margin: 5px;" />
   </a>
   <a href="https://github.com/Bufka2011">
-    <img src="https://avatars.githubusercontent.com/u/85364803?v=4" width="50" height="50" alt="Bufka2011" title="Bufka2011 (1900 contributions)" style="border-radius: 50%; margin: 5px;" />
+    <img src="https://avatars.githubusercontent.com/u/85364803?v=4" width="50" height="50" alt="Bufka2011" title="Bufka2011 (1902 contributions)" style="border-radius: 50%; margin: 5px;" />
   </a>
   <a href="https://github.com/MellowArpeggiation">
     <img src="https://avatars.githubusercontent.com/u/1837639?v=4" width="50" height="50" alt="MellowArpeggiation" title="MellowArpeggiation (1343 contributions)" style="border-radius: 50%; margin: 5px;" />
@@ -159,7 +158,7 @@
     <img src="https://avatars.githubusercontent.com/u/118313105?v=4" width="50" height="50" alt="StarlarkXVII" title="StarlarkXVII (72 contributions)" style="border-radius: 50%; margin: 5px;" />
   </a>
   <a href="https://github.com/BufkaSecond">
-    <img src="https://avatars.githubusercontent.com/u/190631137?v=4" width="50" height="50" alt="BufkaSecond" title="BufkaSecond (63 contributions)" style="border-radius: 50%; margin: 5px;" />
+    <img src="https://avatars.githubusercontent.com/u/190631137?v=4" width="50" height="50" alt="BufkaSecond" title="BufkaSecond (64 contributions)" style="border-radius: 50%; margin: 5px;" />
   </a>
   <a href="https://github.com/Ezzocorbi">
     <img src="https://avatars.githubusercontent.com/u/36800339?v=4" width="50" height="50" alt="Ezzocorbi" title="Ezzocorbi (59 contributions)" style="border-radius: 50%; margin: 5px;" />
