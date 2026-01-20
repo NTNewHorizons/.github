@@ -92,29 +92,31 @@ jobs:
             
             html += '</p>\n';
             
-            // Write to file
+            // Read the README file
             const fs = require('fs');
-            fs.writeFileSync('contributors.html', html);
+            const readmePath = 'profile/README.md';
+            let readmeContent = fs.readFileSync(readmePath, 'utf8');
+            
+            // Replace content between markers
+            const startMarker = '<!-- CONTRIBUTORS_START -->';
+            const endMarker = '<!-- CONTRIBUTORS_END -->';
+            
+            const startIndex = readmeContent.indexOf(startMarker);
+            const endIndex = readmeContent.indexOf(endMarker);
+            
+            if (startIndex !== -1 && endIndex !== -1) {
+              const before = readmeContent.substring(0, startIndex + startMarker.length);
+              const after = readmeContent.substring(endIndex);
+              readmeContent = before + '\n' + html + after;
+              
+              fs.writeFileSync(readmePath, readmeContent);
+              console.log('Successfully updated README.md with contributors');
+            } else {
+              console.error('Could not find contributor markers in README.md');
+            }
             
             return { count: sortedContributors.length };
       
-      - name: Update README
-        run: |
-          # Read the generated HTML
-          CONTRIBUTORS_HTML=$(cat contributors.html)
-          
-          # Create temporary file
-          cp profile/README.md profile/README.md.tmp
-          
-          # Replace content between markers
-          awk -v html="$CONTRIBUTORS_HTML" '
-            BEGIN { in_section=0 }
-            /<!-- CONTRIBUTORS_START -->/ { print; print html; in_section=1; next }
-            /<!-- CONTRIBUTORS_END -->/ { in_section=0 }
-            !in_section { print }
-          ' profile/README.md.tmp > profile/README.md
-          
-          rm profile/README.md.tmp contributors.html
       
       - name: Commit and push if changed
         run: |
