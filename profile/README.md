@@ -77,7 +77,7 @@
 <p align="center">
   <strong>🌟 Our Amazing Contributors 🌟</strong><br><br>
   <a href="https://github.com/Bufka2011">
-    <img src="https://avatars.githubusercontent.com/u/85364803?v=4" width="50" height="50" alt="Bufka2011" title="Bufka2011 (1620 contributions)" style="border-radius: 50%; margin: 5px;" />
+    <img src="https://avatars.githubusercontent.com/u/85364803?v=4" width="50" height="50" alt="Bufka2011" title="Bufka2011 (1623 contributions)" style="border-radius: 50%; margin: 5px;" />
   </a>
   <a href="https://github.com/AniviaFlome">
     <img src="https://avatars.githubusercontent.com/u/66728147?v=4" width="50" height="50" alt="AniviaFlome" title="AniviaFlome (92 contributions)" style="border-radius: 50%; margin: 5px;" />
