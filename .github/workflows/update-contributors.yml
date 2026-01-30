@@ -17,6 +17,13 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Checkout NTNH repository
+        uses: actions/checkout@v4
+        with:
+          repository: NTNewHorizons/NTNH
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: ntnh-repo
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -103,7 +110,10 @@ jobs:
             const fs = require('fs');
             
             // Update both README files
-            const readmePaths = ['profile/README.md', 'README.md'];
+            const readmePaths = [
+              'profile/README.md',
+              'ntnh-repo/README.md'
+            ];
             
             for (const readmePath of readmePaths) {
               try {
@@ -135,7 +145,22 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add profile/README.md README.md
+          git add profile/README.md
+          
+          # Check if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🤖 Auto-update contributors list"
+            git push
+          fi
+
+      - name: Commit and push NTNH if changed
+        run: |
+          cd ntnh-repo
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add README.md
           
           # Check if there are changes
           if git diff --staged --quiet; then
