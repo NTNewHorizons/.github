@@ -24,7 +24,7 @@
     <strong>🌟 Key features:</strong>
     <ul align="center">
         <li><strong>📅 Monthly updates</strong> - we continuously add content, fix bugs, and improve balance</li>
-        <li><strong>🌍 Multilingual support</strong> - translations into 20+ languages via our Crowdin project</li>
+        <li><strong>🌍 Multilingual support</strong> - translations into 20+ languages via our [Crowdin project](https://crowdin.com/project/ntnh)</li>
         <li><strong>🚀 Optimization</strong> - Angelica + ArchaicFix for smooth gameplay even on low-end PCs</li>
         <li><strong>🌌 Space exploration</strong> - new dimensions and technologies to conquer the universe</li>
     </ul>
@@ -55,7 +55,7 @@
   </tr>
   <tr>
     <td valign="top">
-      <a href="https://ntnewhorizons.github.io">🌍 Website (UNDER CONSTRUCTION)</a><br>
+      <a href="https://ntnewhorizons.com">🌍 Website</a><br>
       <a href="https://discord.gg/wtNVzeE5QB">📬 Discord</a><br>
       <a href="https://github.com/NTNewHorizons/NTNH/releases">🔧 Download page</a><br>
       <a href="https://github.com/NTNewHorizons/NTNH/tree/server">🖥️ Server downloads</a><br>
