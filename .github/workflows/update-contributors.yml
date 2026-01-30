@@ -11,18 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
+
       - name: Fetch all contributors
         id: fetch
         uses: actions/github-script@v7
@@ -90,46 +89,53 @@ jobs:
             console.log(`Total unique contributors: ${sortedContributors.length}`);
             
             // Generate HTML
-            let html = '<p align="center">\n  <strong>🌟 Our Amazing Contributors 🌟</strong><br><br>\n';
+            let html = '<div align="center">\n  <h2>🌟 Our Amazing Contributors 🌟</h2>\n';
             
             for (const contributor of sortedContributors) {
               html += `  <a href="${contributor.html_url}">\n`;
-              html += `    <img src="${contributor.avatar_url}" width="50" height="50" alt="${contributor.login}" title="${contributor.login} (${contributor.contributions} contributions)" style="border-radius: 50%; margin: 5px;" />\n`;
+              html += `    <img src="${contributor.avatar_url}" width="50" height="50" alt="${contributor.login}" style="border-radius: 50%; margin: 5px;" title="${contributor.login} (${contributor.contributions} contributions)">\n`;
               html += `  </a>\n`;
             }
             
-            html += '</p>\n';
+            html += '</div>\n';
             
             // Read the README file
             const fs = require('fs');
-            const readmePath = 'profile/README.md';
-            let readmeContent = fs.readFileSync(readmePath, 'utf8');
             
-            // Replace content between markers
-            const startMarker = '<!-- CONTRIBUTORS_START -->';
-            const endMarker = '<!-- CONTRIBUTORS_END -->';
+            // Update both README files
+            const readmePaths = ['profile/README.md', 'README.md'];
             
-            const startIndex = readmeContent.indexOf(startMarker);
-            const endIndex = readmeContent.indexOf(endMarker);
-            
-            if (startIndex !== -1 && endIndex !== -1) {
-              const before = readmeContent.substring(0, startIndex + startMarker.length);
-              const after = readmeContent.substring(endIndex);
-              readmeContent = before + '\n' + html + after;
-              
-              fs.writeFileSync(readmePath, readmeContent);
-              console.log('Successfully updated README.md with contributors');
-            } else {
-              console.error('Could not find contributor markers in README.md');
+            for (const readmePath of readmePaths) {
+              try {
+                let readmeContent = fs.readFileSync(readmePath, 'utf8');
+                
+                // Replace content between markers
+                const startMarker = '<!-- CONTRIBUTORS_START -->';
+                const endMarker = '<!-- CONTRIBUTORS_END -->';
+                const startIndex = readmeContent.indexOf(startMarker);
+                const endIndex = readmeContent.indexOf(endMarker);
+                
+                if (startIndex !== -1 && endIndex !== -1) {
+                  const before = readmeContent.substring(0, startIndex + startMarker.length);
+                  const after = readmeContent.substring(endIndex);
+                  readmeContent = before + '\n' + html + after;
+                  fs.writeFileSync(readmePath, readmeContent);
+                  console.log(`Successfully updated ${readmePath} with contributors`);
+                } else {
+                  console.log(`Could not find contributor markers in ${readmePath}`);
+                }
+              } catch (error) {
+                console.log(`File ${readmePath} not found or error: ${error.message}`);
+              }
             }
             
             return { count: sortedContributors.length };
-      
+
       - name: Commit and push if changed
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add profile/README.md
+          git add profile/README.md README.md
           
           # Check if there are changes
           if git diff --staged --quiet; then
