@@ -7,16 +7,17 @@ on:
   workflow_dispatch: # Allow manual triggering
 
 jobs:
-  # Update GitHub code contributors (existing)
-  update-code-contributors:
+  update-all-contributors:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Checkout repository
+      # Step 1: Checkout all repositories
+      - name: Checkout .github repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.UNIVERSAL_FINE }}
+          path: github-repo
 
       - name: Checkout NTNH repository
         uses: actions/checkout@v4
@@ -25,13 +26,22 @@ jobs:
           token: ${{ secrets.UNIVERSAL_FINE }}
           path: ntnh-repo
 
+      - name: Checkout NTNH-Translations repository
+        uses: actions/checkout@v4
+        with:
+          repository: NTNewHorizons/NTNH-Translations
+          token: ${{ secrets.UNIVERSAL_FINE }}
+          path: translations-repo
+
+      # Step 2: Set up environment
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Fetch all contributors
-        id: fetch
+      # Step 3: Update GitHub code contributors
+      - name: Fetch all code contributors
+        id: fetch-contributors
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.UNIVERSAL_FINE }}
@@ -108,12 +118,11 @@ jobs:
             
             html += '</div>\n';
             
-            // Read the README file
+            // Read and update README files
             const fs = require('fs');
             
-            // Update both README files
             const readmePaths = [
-              'profile/README.md',
+              'github-repo/profile/README.md',
               'ntnh-repo/README.md'
             ];
             
@@ -143,13 +152,115 @@ jobs:
             
             return { count: sortedContributors.length };
 
-      - name: Commit and push if changed
+      # Step 4: Update Crowdin contributors for all repos
+      - name: Fetch and format Crowdin translation contributors
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.UNIVERSAL_FINE }}
+          script: |
+            const fs = require('fs');
+            const https = require('https');
+            
+            const projectId = process.env.CROWDIN_PROJECT_ID;
+            const token = process.env.CROWDIN_PERSONAL_TOKEN;
+            
+            // Fetch contributors from Crowdin API
+            const options = {
+              hostname: 'api.crowdin.com',
+              path: `/api/v2/projects/${projectId}/members`,
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            };
+            
+            const crowdinData = await new Promise((resolve, reject) => {
+              https.get(options, (res) => {
+                let data = '';
+                res.on('data', (chunk) => { data += chunk; });
+                res.on('end', () => {
+                  try {
+                    resolve(JSON.parse(data));
+                  } catch (e) {
+                    reject(e);
+                  }
+                });
+              }).on('error', reject);
+            });
+            
+            // Filter and sort contributors
+            const contributors = crowdinData.data
+              .filter(member => {
+                // Filter by minimum words contributed (10)
+                const wordsTranslated = member.data.translated || 0;
+                return wordsTranslated >= 10;
+              })
+              .sort((a, b) => (b.data.translated || 0) - (a.data.translated || 0))
+              .slice(0, 50); // Max 50 contributors
+            
+            console.log(`Found ${contributors.length} Crowdin contributors`);
+            
+            // Generate HTML in the same format as GitHub contributors
+            let html = '<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟</h2>\n';
+            
+            for (const contributor of contributors) {
+              const username = contributor.data.username;
+              const avatarUrl = contributor.data.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&size=50`;
+              const profileUrl = `https://crowdin.com/profile/${username}`;
+              const wordsTranslated = contributor.data.translated || 0;
+              
+              html += `  <a href="${profileUrl}">\n`;
+              html += `    <img src="${avatarUrl}" width="50" height="50" alt="${username}" style="border-radius: 50%; margin: 5px;" title="${username} (${wordsTranslated} words translated)">\n`;
+              html += `  </a>\n`;
+            }
+            
+            html += '</div>\n';
+            
+            // Update all README files with Crowdin contributors
+            const readmePaths = [
+              'github-repo/profile/README.md',
+              'ntnh-repo/README.md',
+              'translations-repo/README.md'
+            ];
+            
+            for (const readmePath of readmePaths) {
+              try {
+                let readmeContent = fs.readFileSync(readmePath, 'utf8');
+                
+                // Replace content between markers
+                const startMarker = '<!-- CROWDIN_CONTRIBUTORS_START -->';
+                const endMarker = '<!-- CROWDIN_CONTRIBUTORS_END -->';
+                const startIndex = readmeContent.indexOf(startMarker);
+                const endIndex = readmeContent.indexOf(endMarker);
+                
+                if (startIndex !== -1 && endIndex !== -1) {
+                  const before = readmeContent.substring(0, startIndex + startMarker.length);
+                  const after = readmeContent.substring(endIndex);
+                  readmeContent = before + '\n' + html + after;
+                  fs.writeFileSync(readmePath, readmeContent);
+                  console.log(`Successfully updated ${readmePath} with Crowdin contributors`);
+                } else {
+                  console.log(`Could not find Crowdin contributor markers in ${readmePath}`);
+                }
+              } catch (error) {
+                console.log(`File ${readmePath} not found or error: ${error.message}`);
+              }
+            }
+            
+            return { count: contributors.length };
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      # Step 5: Commit and push all changes to .github repository
+      - name: Commit and push .github repository
         run: |
+          cd github-repo
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add profile/README.md || true
           
-          # Check if there are changes
           if git diff --staged --quiet; then
             echo "No changes to commit in .github repo"
           else
@@ -157,16 +268,14 @@ jobs:
             git push
           fi
 
-      - name: Commit and push NTNH if changed
-        env:
-          GITHUB_TOKEN: ${{ secrets.UNIVERSAL_FINE }}
+      # Step 6: Commit and push all changes to NTNH repository
+      - name: Commit and push NTNH repository
         run: |
           cd ntnh-repo
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add README.md || true
           
-          # Check if there are changes
           if git diff --staged --quiet; then
             echo "No changes to commit in NTNH repo"
           else
@@ -174,145 +283,17 @@ jobs:
             git push
           fi
 
-  # Update Crowdin translation contributors in NTNH
-  update-crowdin-ntnh:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout NTNewHorizons/NTNH
-        uses: actions/checkout@v4
-        with:
-          repository: NTNewHorizons/NTNH
-          token: ${{ secrets.UNIVERSAL_FINE }}
-
-      - name: Generate Crowdin Contributors table
-        uses: andrii-bodnar/action-crowdin-contributors@v3
-        with:
-          contributors_per_line: 7
-          max_contributors: 50
-          image_size: 50
-          min_words_contributed: 10
-          include_languages: false
-          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS_START -->'
-          placeholder_end: '<!-- CROWDIN_CONTRIBUTORS_END -->'
-        env:
-          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
-          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
-
-      - name: Wrap Crowdin table with centered div
+      # Step 7: Commit and push all changes to NTNH-Translations repository
+      - name: Commit and push NTNH-Translations repository
         run: |
-          # Read the README
-          README_CONTENT=$(cat README.md)
-          
-          # Extract the table content between the temporary markers
-          TABLE_START='<!-- CROWDIN_CONTRIBUTORS -->'
-          TABLE_END='<!-- CROWDIN_CONTRIBUTORS_END -->'
-          
-          # Use perl to extract and wrap the content
-          perl -i -pe '
-            BEGIN { $/ = undef; }
-            s/\Q'"$TABLE_START"'\E\n(.*?)\Q'"$TABLE_END"'\E/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
-          ' README.md
-
-      - name: Commit and push changes
-        run: |
+          cd translations-repo
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add README.md || true
           
           if git diff --staged --quiet; then
-            echo "No changes to commit"
+            echo "No changes to commit in NTNH-Translations repo"
           else
-            git commit -m "🤖 Auto-update Crowdin translation contributors"
-            git push
-          fi
-
-  # Update Crowdin translation contributors in NTNH-Translations
-  update-crowdin-translations:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout NTNewHorizons/NTNH-Translations
-        uses: actions/checkout@v4
-        with:
-          repository: NTNewHorizons/NTNH-Translations
-          token: ${{ secrets.UNIVERSAL_FINE }}
-
-      - name: Generate Crowdin Contributors table
-        uses: andrii-bodnar/action-crowdin-contributors@v3
-        with:
-          contributors_per_line: 7
-          max_contributors: 50
-          image_size: 50
-          min_words_contributed: 10
-          include_languages: false
-          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS_START -->'
-          placeholder_end: '<!-- CROWDIN_CONTRIBUTORS_END -->'
-        env:
-          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
-          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
-
-      - name: Wrap Crowdin table with centered div
-        run: |
-          # Use perl to extract and wrap the content
-          perl -i -pe '
-            BEGIN { $/ = undef; }
-            s/<!-- CROWDIN_CONTRIBUTORS -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
-          ' README.md
-
-      - name: Commit and push changes
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add README.md || true
-          
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "🤖 Auto-update Crowdin translation contributors"
-            git push
-          fi
-
-  # Update Crowdin translation contributors in .github
-  update-crowdin-github:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout NTNewHorizons/.github
-        uses: actions/checkout@v4
-        with:
-          repository: NTNewHorizons/.github
-          token: ${{ secrets.UNIVERSAL_FINE }}
-
-      - name: Generate Crowdin Contributors table
-        uses: andrii-bodnar/action-crowdin-contributors@v3
-        with:
-          contributors_per_line: 7
-          max_contributors: 50
-          image_size: 50
-          min_words_contributed: 10
-          include_languages: false
-          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS_START -->'
-          placeholder_end: '<!-- CROWDIN_CONTRIBUTORS_END -->'
-          files: 'profile/README.md'
-        env:
-          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
-          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
-
-      - name: Wrap Crowdin table with centered div
-        run: |
-          # Use perl to extract and wrap the content
-          perl -i -pe '
-            BEGIN { $/ = undef; }
-            s/<!-- CROWDIN_CONTRIBUTORS -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
-          ' profile/README.md
-
-      - name: Commit and push changes
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add profile/README.md || true
-          
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "🤖 Auto-update Crowdin translation contributors"
+            git commit -m "🤖 Auto-update contributors list"
             git push
           fi
