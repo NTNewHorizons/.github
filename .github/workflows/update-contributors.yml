@@ -192,7 +192,7 @@ jobs:
           image_size: 50
           min_words_contributed: 10
           include_languages: false
-          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS -->'
+          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS_START -->'
           placeholder_end: '<!-- CROWDIN_CONTRIBUTORS_END -->'
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
@@ -244,7 +244,7 @@ jobs:
           image_size: 50
           min_words_contributed: 10
           include_languages: false
-          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS -->'
+          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS_START -->'
           placeholder_end: '<!-- CROWDIN_CONTRIBUTORS_END -->'
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
@@ -289,7 +289,7 @@ jobs:
           image_size: 50
           min_words_contributed: 10
           include_languages: false
-          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS -->'
+          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS_START -->'
           placeholder_end: '<!-- CROWDIN_CONTRIBUTORS_END -->'
           files: 'profile/README.md'
         env:
