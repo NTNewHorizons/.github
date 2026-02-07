@@ -192,11 +192,26 @@ jobs:
           image_size: 50
           min_words_contributed: 10
           include_languages: false
-          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS_START -->'
+          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS -->'
           placeholder_end: '<!-- CROWDIN_CONTRIBUTORS_END -->'
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Wrap Crowdin table with centered div
+        run: |
+          # Read the README
+          README_CONTENT=$(cat README.md)
+          
+          # Extract the table content between the temporary markers
+          TABLE_START='<!-- CROWDIN_CONTRIBUTORS -->'
+          TABLE_END='<!-- CROWDIN_CONTRIBUTORS_END -->'
+          
+          # Use perl to extract and wrap the content
+          perl -i -pe '
+            BEGIN { $/ = undef; }
+            s/\Q'"$TABLE_START"'\E\n(.*?)\Q'"$TABLE_END"'\E/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
+          ' README.md
 
       - name: Commit and push changes
         run: |
@@ -229,11 +244,19 @@ jobs:
           image_size: 50
           min_words_contributed: 10
           include_languages: false
-          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS_START -->'
+          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS -->'
           placeholder_end: '<!-- CROWDIN_CONTRIBUTORS_END -->'
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Wrap Crowdin table with centered div
+        run: |
+          # Use perl to extract and wrap the content
+          perl -i -pe '
+            BEGIN { $/ = undef; }
+            s/<!-- CROWDIN_CONTRIBUTORS -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
+          ' README.md
 
       - name: Commit and push changes
         run: |
@@ -266,12 +289,20 @@ jobs:
           image_size: 50
           min_words_contributed: 10
           include_languages: false
-          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS_START -->'
+          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS -->'
           placeholder_end: '<!-- CROWDIN_CONTRIBUTORS_END -->'
           files: 'profile/README.md'
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Wrap Crowdin table with centered div
+        run: |
+          # Use perl to extract and wrap the content
+          perl -i -pe '
+            BEGIN { $/ = undef; }
+            s/<!-- CROWDIN_CONTRIBUTORS -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
+          ' profile/README.md
 
       - name: Commit and push changes
         run: |
