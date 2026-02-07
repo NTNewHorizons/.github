@@ -107,4 +107,7 @@
 <!-- CONTRIBUTORS_END -->
 
 <!-- CROWDIN_CONTRIBUTORS_START -->
+<div align="center">
+  <h2>🌟 Our Wonderful Translation Contributors 🌟</h2>
+</div>
 <!-- CROWDIN_CONTRIBUTORS_END -->
