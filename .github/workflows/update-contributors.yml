@@ -152,108 +152,76 @@ jobs:
             
             return { count: sortedContributors.length };
 
-      # Step 4: Update Crowdin contributors for all repos
-      - name: Fetch and format Crowdin translation contributors
-        uses: actions/github-script@v7
+      # Step 4: Generate Crowdin contributors table for .github
+      - name: Generate Crowdin Contributors for .github
+        uses: andrii-bodnar/action-crowdin-contributors@v3
         with:
-          github-token: ${{ secrets.UNIVERSAL_FINE }}
-          script: |
-            const fs = require('fs');
-            const https = require('https');
-            
-            const projectId = process.env.CROWDIN_PROJECT_ID;
-            const token = process.env.CROWDIN_PERSONAL_TOKEN;
-            
-            // Fetch contributors from Crowdin API
-            const options = {
-              hostname: 'api.crowdin.com',
-              path: `/api/v2/projects/${projectId}/members`,
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              }
-            };
-            
-            const crowdinData = await new Promise((resolve, reject) => {
-              https.get(options, (res) => {
-                let data = '';
-                res.on('data', (chunk) => { data += chunk; });
-                res.on('end', () => {
-                  try {
-                    resolve(JSON.parse(data));
-                  } catch (e) {
-                    reject(e);
-                  }
-                });
-              }).on('error', reject);
-            });
-            
-            // Filter and sort contributors
-            const contributors = crowdinData.data
-              .filter(member => {
-                // Filter by minimum words contributed (10)
-                const wordsTranslated = member.data.translated || 0;
-                return wordsTranslated >= 10;
-              })
-              .sort((a, b) => (b.data.translated || 0) - (a.data.translated || 0))
-              .slice(0, 50); // Max 50 contributors
-            
-            console.log(`Found ${contributors.length} Crowdin contributors`);
-            
-            // Generate HTML in the same format as GitHub contributors
-            let html = '<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟</h2>\n';
-            
-            for (const contributor of contributors) {
-              const username = contributor.data.username;
-              const avatarUrl = contributor.data.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&size=50`;
-              const profileUrl = `https://crowdin.com/profile/${username}`;
-              const wordsTranslated = contributor.data.translated || 0;
-              
-              html += `  <a href="${profileUrl}">\n`;
-              html += `    <img src="${avatarUrl}" width="50" height="50" alt="${username}" style="border-radius: 50%; margin: 5px;" title="${username} (${wordsTranslated} words translated)">\n`;
-              html += `  </a>\n`;
-            }
-            
-            html += '</div>\n';
-            
-            // Update all README files with Crowdin contributors
-            const readmePaths = [
-              'github-repo/profile/README.md',
-              'ntnh-repo/README.md',
-              'translations-repo/README.md'
-            ];
-            
-            for (const readmePath of readmePaths) {
-              try {
-                let readmeContent = fs.readFileSync(readmePath, 'utf8');
-                
-                // Replace content between markers
-                const startMarker = '<!-- CROWDIN_CONTRIBUTORS_START -->';
-                const endMarker = '<!-- CROWDIN_CONTRIBUTORS_END -->';
-                const startIndex = readmeContent.indexOf(startMarker);
-                const endIndex = readmeContent.indexOf(endMarker);
-                
-                if (startIndex !== -1 && endIndex !== -1) {
-                  const before = readmeContent.substring(0, startIndex + startMarker.length);
-                  const after = readmeContent.substring(endIndex);
-                  readmeContent = before + '\n' + html + after;
-                  fs.writeFileSync(readmePath, readmeContent);
-                  console.log(`Successfully updated ${readmePath} with Crowdin contributors`);
-                } else {
-                  console.log(`Could not find Crowdin contributor markers in ${readmePath}`);
-                }
-              } catch (error) {
-                console.log(`File ${readmePath} not found or error: ${error.message}`);
-              }
-            }
-            
-            return { count: contributors.length };
+          contributors_per_line: 7
+          max_contributors: 50
+          image_size: 50
+          min_words_contributed: 10
+          include_languages: false
+          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS_START -->'
+          placeholder_end: '<!-- CROWDIN_CONTRIBUTORS_END -->'
+          files: 'github-repo/profile/README.md'
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
-      # Step 5: Commit and push all changes to .github repository
+      - name: Wrap Crowdin table in .github with centered div
+        run: |
+          perl -i -pe '
+            BEGIN { $/ = undef; }
+            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
+          ' github-repo/profile/README.md
+
+      # Step 5: Generate Crowdin contributors table for NTNH
+      - name: Generate Crowdin Contributors for NTNH
+        uses: andrii-bodnar/action-crowdin-contributors@v3
+        with:
+          contributors_per_line: 7
+          max_contributors: 50
+          image_size: 50
+          min_words_contributed: 10
+          include_languages: false
+          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS_START -->'
+          placeholder_end: '<!-- CROWDIN_CONTRIBUTORS_END -->'
+          files: 'ntnh-repo/README.md'
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Wrap Crowdin table in NTNH with centered div
+        run: |
+          perl -i -pe '
+            BEGIN { $/ = undef; }
+            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
+          ' ntnh-repo/README.md
+
+      # Step 6: Generate Crowdin contributors table for Translations
+      - name: Generate Crowdin Contributors for Translations
+        uses: andrii-bodnar/action-crowdin-contributors@v3
+        with:
+          contributors_per_line: 7
+          max_contributors: 50
+          image_size: 50
+          min_words_contributed: 10
+          include_languages: false
+          placeholder_start: '<!-- CROWDIN_CONTRIBUTORS_START -->'
+          placeholder_end: '<!-- CROWDIN_CONTRIBUTORS_END -->'
+          files: 'translations-repo/README.md'
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Wrap Crowdin table in Translations with centered div
+        run: |
+          perl -i -pe '
+            BEGIN { $/ = undef; }
+            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
+          ' translations-repo/README.md
+
+      # Step 7: Commit and push all changes to .github repository
       - name: Commit and push .github repository
         run: |
           cd github-repo
@@ -268,7 +236,7 @@ jobs:
             git push
           fi
 
-      # Step 6: Commit and push all changes to NTNH repository
+      # Step 8: Commit and push all changes to NTNH repository
       - name: Commit and push NTNH repository
         run: |
           cd ntnh-repo
@@ -283,7 +251,7 @@ jobs:
             git push
           fi
 
-      # Step 7: Commit and push all changes to NTNH-Translations repository
+      # Step 9: Commit and push all changes to NTNH-Translations repository
       - name: Commit and push NTNH-Translations repository
         run: |
           cd translations-repo
