@@ -181,8 +181,6 @@
 </div>
 <!-- CROWDIN_CONTRIBUTORS_END -->
 
-## Star History
-
 <a href="https://www.star-history.com/?repos=NTNewHorizons%2FNTNH&type=timeline&logscale=&legend=top-left">
  <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=NTNewHorizons/NTNH&type=timeline&theme=dark&legend=top-left" />
