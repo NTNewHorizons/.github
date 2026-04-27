@@ -107,13 +107,19 @@ jobs:
             
             console.log(`Total unique contributors: ${sortedContributors.length}`);
             
-            // Generate HTML — all anchors joined on one line with no separator
-            // so GitHub's renderer flows them horizontally instead of stacking
-            const contributorLinks = sortedContributors.map(c =>
-              `<a href="${c.html_url}"><img src="${c.avatar_url}" width="50" height="50" alt="${c.login}" style="border-radius:50%;margin:5px;" title="${c.login} (${c.contributions} contributions)"></a>`
-            ).join('');
-            
-            const html = `<div align="center">\n  <h2>🌟 Our Amazing Contributors 🌟</h2>\n  ${contributorLinks}\n</div>\n`;
+             // Generate HTML table (7 per row, no height attr to avoid GitHub display:block inject)
+             const contributorsPerRow = 7;
+             const tableRows = [];
+             
+             for (let i = 0; i < sortedContributors.length; i += contributorsPerRow) {
+               const rowContributors = sortedContributors.slice(i, i + contributorsPerRow);
+               const cells = rowContributors.map(c => 
+                 `<td align="center"><a href="${c.html_url}"><img src="${c.avatar_url}" width="50" alt="${c.login}" style="border-radius:50%;margin:5px;"/></a><br/><sub><b>${c.login}</b></sub><br/><span>${c.contributions} 🏆</span></td>`
+               ).join('\n');
+               tableRows.push(`<tr>${cells}</tr>`);
+             }
+             
+             const html = `<details>\n<summary><h2>🌟 Our Amazing Contributors 🌟 (click to expand)</h2></summary>\n\n<div align="center">\n<table>${tableRows.join('\n')}</table>\n</div>\n\n</details>\n`;
             
             // Read and update README files
             const fs = require('fs');
