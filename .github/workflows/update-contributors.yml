@@ -111,9 +111,7 @@ jobs:
             let html = '<div align="center">\n  <h2>🌟 Our Amazing Contributors 🌟</h2>\n';
             
             for (const contributor of sortedContributors) {
-              html += `  <a href="${contributor.html_url}">\n`;
-              html += `    <img src="${contributor.avatar_url}" width="50" height="50" alt="${contributor.login}" style="border-radius: 50%; margin: 5px;" title="${contributor.login} (${contributor.contributions} contributions)">\n`;
-              html += `  </a>\n`;
+              html += `  <a href="${contributor.html_url}"><img src="${contributor.avatar_url}" width="50" height="50" alt="${contributor.login}" style="border-radius: 50%; margin: 5px;" title="${contributor.login} (${contributor.contributions} contributions)"></a>\n`;
             }
             
             html += '</div>\n';
