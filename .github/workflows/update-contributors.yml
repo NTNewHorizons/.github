@@ -119,7 +119,7 @@ jobs:
                tableRows.push(`<tr>${cells}</tr>`);
              }
              
-             const html = `<details>\n<summary><h2>🌟 Our Amazing Contributors 🌟 (click to expand)</h2></summary>\n\n<div align="center">\n<table>${tableRows.join('\n')}</table>\n</div>\n\n</details>\n`;
+             const html = `<div align="center">\n\n<h2 style="text-align:center">🌟 Our Amazing Contributors 🌟</h2>\n\n<table>${tableRows.join('\n')}</table>\n\n</div>\n`;
             
             // Read and update README files
             const fs = require('fs');

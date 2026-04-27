@@ -74,10 +74,9 @@
 <br>
 
 <!-- CONTRIBUTORS_START -->
-<details>
-<summary><h2>🌟 Our Amazing Contributors 🌟 (click to expand)</h2></summary>
-
 <div align="center">
+
+<h2 style="text-align:center">🌟 Our Amazing Contributors 🌟</h2>
 
 <table>
 <tr>
@@ -97,8 +96,6 @@
 </table>
 
 </div>
-
-</details>
 <!-- CONTRIBUTORS_END -->
 
 <!-- CROWDIN_CONTRIBUTORS_START -->
