@@ -114,7 +114,7 @@ jobs:
              for (let i = 0; i < sortedContributors.length; i += contributorsPerRow) {
                const rowContributors = sortedContributors.slice(i, i + contributorsPerRow);
                const cells = rowContributors.map(c => 
-                 `<td align="center"><a href="${c.html_url}"><img src="${c.avatar_url}" width="50" alt="${c.login}" style="border-radius:50%;margin:5px;"/></a><br/><sub><b>${c.login}</b></sub><br/><span>${c.contributions} 🏆</span></td>`
+                 `<td align="center"><a href="${c.html_url}"><img src="${c.avatar_url}" width="50" alt="${c.login}" style="border-radius:50%;margin:5px;"/></a><br/><sub><b>${c.login}</b></sub><br[...]
                ).join('\n');
                tableRows.push(`<tr>${cells}</tr>`);
              }
@@ -171,11 +171,28 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
+      - name: Remove excluded users from Crowdin contributors in .github
+        run: |
+          node -e "
+            const fs = require('fs');
+            const excludedUsers = ['Bufka2011', 'BufkaSecond'];
+            let content = fs.readFileSync('github-repo/profile/README.md', 'utf8');
+            
+            // Remove each excluded user's avatar and link
+            excludedUsers.forEach(user => {
+              const pattern = new RegExp(\`<td align=\\\"center\\\"><a href=\\\"[^\\\"]*\\\"><img src=\\\"[^\\\"]*\\\" width=\\\"50\\\" alt=\\\"\${user}\\\"[^>]*>[^<]*</a><br/><sub><b>\${user}</b></sub><br[^<]*</td>\`, 'g');
+              content = content.replace(pattern, '');
+            });
+            
+            fs.writeFileSync('github-repo/profile/README.md', content);
+            console.log('Removed excluded users from Crowdin contributors');
+          "
+
       - name: Wrap Crowdin table in .github with centered div
         run: |
           perl -i -pe '
             BEGIN { $/ = undef; }
-            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
+            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contribut[...]
           ' github-repo/profile/README.md
 
       # Step 5: Generate Crowdin contributors table for NTNH
@@ -194,11 +211,28 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
+      - name: Remove excluded users from Crowdin contributors in NTNH
+        run: |
+          node -e "
+            const fs = require('fs');
+            const excludedUsers = ['Bufka2011', 'BufkaSecond'];
+            let content = fs.readFileSync('ntnh-repo/README.md', 'utf8');
+            
+            // Remove each excluded user's avatar and link
+            excludedUsers.forEach(user => {
+              const pattern = new RegExp(\`<td align=\\\"center\\\"><a href=\\\"[^\\\"]*\\\"><img src=\\\"[^\\\"]*\\\" width=\\\"50\\\" alt=\\\"\${user}\\\"[^>]*>[^<]*</a><br/><sub><b>\${user}</b></sub><br[^<]*</td>\`, 'g');
+              content = content.replace(pattern, '');
+            });
+            
+            fs.writeFileSync('ntnh-repo/README.md', content);
+            console.log('Removed excluded users from Crowdin contributors');
+          "
+
       - name: Wrap Crowdin table in NTNH with centered div
         run: |
           perl -i -pe '
             BEGIN { $/ = undef; }
-            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
+            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contribut[...]
           ' ntnh-repo/README.md
 
       # Step 6: Generate Crowdin contributors table for Translations
@@ -217,11 +251,28 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
+      - name: Remove excluded users from Crowdin contributors in Translations
+        run: |
+          node -e "
+            const fs = require('fs');
+            const excludedUsers = ['Bufka2011', 'BufkaSecond'];
+            let content = fs.readFileSync('translations-repo/README.md', 'utf8');
+            
+            // Remove each excluded user's avatar and link
+            excludedUsers.forEach(user => {
+              const pattern = new RegExp(\`<td align=\\\"center\\\"><a href=\\\"[^\\\"]*\\\"><img src=\\\"[^\\\"]*\\\" width=\\\"50\\\" alt=\\\"\${user}\\\"[^>]*>[^<]*</a><br/><sub><b>\${user}</b></sub><br[^<]*</td>\`, 'g');
+              content = content.replace(pattern, '');
+            });
+            
+            fs.writeFileSync('translations-repo/README.md', content);
+            console.log('Removed excluded users from Crowdin contributors');
+          "
+
       - name: Wrap Crowdin table in Translations with centered div
         run: |
           perl -i -pe '
             BEGIN { $/ = undef; }
-            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
+            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contribut[...]
           ' translations-repo/README.md
 
       # Step 7: Commit and push all changes to .github repository
