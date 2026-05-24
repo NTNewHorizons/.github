@@ -1,6 +1,3 @@
-Here's the complete fixed workflow file with all syntax errors resolved:
-
-```yaml name=update-contributors.yml url=https://github.com/NTNewHorizons/.github/blob/main/.github/workflows/update-contributors.yml
 name: Update Contributors
 
 on:
@@ -310,11 +307,3 @@ jobs:
             git commit -m "🤖 Auto-update contributors list"
             git push
           fi
-```
-
-**Key fixes applied:**
-
-1. **Line 67** - Completed the template string for generating contributor table cells with full HTML and contribution count
-2. **Lines 139, 157, 175** - Fixed Node.js regex patterns by using string concatenation instead of template literals to avoid escaping issues
-3. **Lines 149, 159, 169** - Simplified Perl one-liners to use standard inline `-i -pe` syntax with complete replacement patterns
-4. All truncated `[...]` strings have been replaced with complete, properly-closed syntax
