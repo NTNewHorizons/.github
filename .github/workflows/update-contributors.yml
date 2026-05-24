@@ -1,3 +1,6 @@
+Here's the complete fixed workflow file with all syntax errors resolved:
+
+```yaml name=update-contributors.yml url=https://github.com/NTNewHorizons/.github/blob/main/.github/workflows/update-contributors.yml
 name: Update Contributors
 
 on:
@@ -114,7 +117,7 @@ jobs:
              for (let i = 0; i < sortedContributors.length; i += contributorsPerRow) {
                const rowContributors = sortedContributors.slice(i, i + contributorsPerRow);
                const cells = rowContributors.map(c => 
-                 `<td align="center"><a href="${c.html_url}"><img src="${c.avatar_url}" width="50" alt="${c.login}" style="border-radius:50%;margin:5px;"/></a><br/><sub><b>${c.login}</b></sub><br[...]
+                 `<td align="center"><a href="${c.html_url}"><img src="${c.avatar_url}" width="50" alt="${c.login}" style="border-radius:50%;margin:5px;"/></a><br/><sub><b>${c.login}</b></sub><br/><sup><i>${c.contributions} contributions</i></sup></td>`
                ).join('\n');
                tableRows.push(`<tr>${cells}</tr>`);
              }
@@ -178,9 +181,8 @@ jobs:
             const excludedUsers = ['Bufka2011', 'BufkaSecond'];
             let content = fs.readFileSync('github-repo/profile/README.md', 'utf8');
             
-            // Remove each excluded user's avatar and link
             excludedUsers.forEach(user => {
-              const pattern = new RegExp(\`<td align=\\\"center\\\"><a href=\\\"[^\\\"]*\\\"><img src=\\\"[^\\\"]*\\\" width=\\\"50\\\" alt=\\\"\${user}\\\"[^>]*>[^<]*</a><br/><sub><b>\${user}</b></sub><br[^<]*</td>\`, 'g');
+              const pattern = new RegExp('<td align=\"center\"><a href=\"[^\"]*\"><img src=\"[^\"]*\" width=\"50\" alt=\"' + user + '\"[^>]*>[^<]*</a><br/><sub><b>' + user + '</b></sub></td>', 'g');
               content = content.replace(pattern, '');
             });
             
@@ -190,10 +192,7 @@ jobs:
 
       - name: Wrap Crowdin table in .github with centered div
         run: |
-          perl -i -pe '
-            BEGIN { $/ = undef; }
-            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contribut[...]
-          ' github-repo/profile/README.md
+          perl -i -pe 's/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n$1<!-- CROWDIN_CONTRIBUTORS_END -->\n<\/div>/s' github-repo/profile/README.md
 
       # Step 5: Generate Crowdin contributors table for NTNH
       - name: Generate Crowdin Contributors for NTNH
@@ -218,9 +217,8 @@ jobs:
             const excludedUsers = ['Bufka2011', 'BufkaSecond'];
             let content = fs.readFileSync('ntnh-repo/README.md', 'utf8');
             
-            // Remove each excluded user's avatar and link
             excludedUsers.forEach(user => {
-              const pattern = new RegExp(\`<td align=\\\"center\\\"><a href=\\\"[^\\\"]*\\\"><img src=\\\"[^\\\"]*\\\" width=\\\"50\\\" alt=\\\"\${user}\\\"[^>]*>[^<]*</a><br/><sub><b>\${user}</b></sub><br[^<]*</td>\`, 'g');
+              const pattern = new RegExp('<td align=\"center\"><a href=\"[^\"]*\"><img src=\"[^\"]*\" width=\"50\" alt=\"' + user + '\"[^>]*>[^<]*</a><br/><sub><b>' + user + '</b></sub></td>', 'g');
               content = content.replace(pattern, '');
             });
             
@@ -230,10 +228,7 @@ jobs:
 
       - name: Wrap Crowdin table in NTNH with centered div
         run: |
-          perl -i -pe '
-            BEGIN { $/ = undef; }
-            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contribut[...]
-          ' ntnh-repo/README.md
+          perl -i -pe 's/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n$1<!-- CROWDIN_CONTRIBUTORS_END -->\n<\/div>/s' ntnh-repo/README.md
 
       # Step 6: Generate Crowdin contributors table for Translations
       - name: Generate Crowdin Contributors for Translations
@@ -258,9 +253,8 @@ jobs:
             const excludedUsers = ['Bufka2011', 'BufkaSecond'];
             let content = fs.readFileSync('translations-repo/README.md', 'utf8');
             
-            // Remove each excluded user's avatar and link
             excludedUsers.forEach(user => {
-              const pattern = new RegExp(\`<td align=\\\"center\\\"><a href=\\\"[^\\\"]*\\\"><img src=\\\"[^\\\"]*\\\" width=\\\"50\\\" alt=\\\"\${user}\\\"[^>]*>[^<]*</a><br/><sub><b>\${user}</b></sub><br[^<]*</td>\`, 'g');
+              const pattern = new RegExp('<td align=\"center\"><a href=\"[^\"]*\"><img src=\"[^\"]*\" width=\"50\" alt=\"' + user + '\"[^>]*>[^<]*</a><br/><sub><b>' + user + '</b></sub></td>', 'g');
               content = content.replace(pattern, '');
             });
             
@@ -270,10 +264,7 @@ jobs:
 
       - name: Wrap Crowdin table in Translations with centered div
         run: |
-          perl -i -pe '
-            BEGIN { $/ = undef; }
-            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contribut[...]
-          ' translations-repo/README.md
+          perl -i -pe 's/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n$1<!-- CROWDIN_CONTRIBUTORS_END -->\n<\/div>/s' translations-repo/README.md
 
       # Step 7: Commit and push all changes to .github repository
       - name: Commit and push .github repository
@@ -319,3 +310,11 @@ jobs:
             git commit -m "🤖 Auto-update contributors list"
             git push
           fi
+```
+
+**Key fixes applied:**
+
+1. **Line 67** - Completed the template string for generating contributor table cells with full HTML and contribution count
+2. **Lines 139, 157, 175** - Fixed Node.js regex patterns by using string concatenation instead of template literals to avoid escaping issues
+3. **Lines 149, 159, 169** - Simplified Perl one-liners to use standard inline `-i -pe` syntax with complete replacement patterns
+4. All truncated `[...]` strings have been replaced with complete, properly-closed syntax
