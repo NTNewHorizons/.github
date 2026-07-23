@@ -58,7 +58,7 @@
       <a href="https://ntnewhorizons.com">🌍 Website</a><br>
       <a href="https://discord.gg/wtNVzeE5QB">📬 Discord</a><br>
       <a href="https://github.com/NTNewHorizons/NTNH/releases">🔧 Download page</a><br>
-      <a href="https://github.com/NTNewHorizons/NTNH/tree/server">🖥️ Server downloads</a><br>
+      <a href="https://github.com/NTNewHorizons/NTNH-Server">🖥️ Server downloads</a><br>
     </td>
     <td valign="top">
       <a href="https://github.com/NTNewHorizons/NTNH/issues/new/choose">🐞 Open a new issue</a><br>
