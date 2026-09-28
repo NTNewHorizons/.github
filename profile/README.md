@@ -13,14 +13,24 @@
     <td valign="top">
       <a href="https://ntnewhorizons.com">🌍 Website</a><br>
       <a href="https://discord.gg/wtNVzeE5QB">📬 Discord</a><br>
-      <a href="https://github.com/NTNewHorizons/NTNH/releases">🔧 Download page</a><br>
+      <a href="https://www.technicpack.net/modpack/nuclear-tech-new-horizons">🔧 Technic page</a><br>
+      <a href="https://www.curseforge.com/minecraft/modpacks/ntnewhorizons">🔥 CurseForge page</a><br>
+      <a href="https://ntnewhorizons.com/download">🧊 Downloads for Prism/MultiMC</a><br>
       <a href="https://github.com/NTNewHorizons/NTNH-Server">🖥️ Server downloads</a><br>
+      <a href="https://nucleartech.wiki/wiki/Main_Page">📙 NTM Wiki</a><br>
+      <a href="https://status.ntnewhorizons.com">📡 Status page</a><br>
+      <a href="https://crowdin.com/project/ntnh">🔡 Translation project</a><br>
     </td>
     <td valign="top">
       <a href="https://github.com/NTNewHorizons/NTNH/issues/new/choose">🐞 Open a new issue</a><br>
       <a href="https://github.com/pulls?q=is%3Aopen+is%3Apr+org%3ANTNewHorizons+archived%3Afalse+draft%3Afalse">🛠️ View all open pull requests</a><br>
+      <a href="https://github.com/NTNewHorizons/NTNH/releases">📋 Releases & changelog</a><br>
+      <a href="https://ntnewhorizons.com/guide">📖 Getting started guide</a><br>
+      <a href="https://ntnewhorizons.com/about">📜 Story & philosophy</a><br>
+      <a href="https://github.com/NTNewHorizons/Hbm-s-Nuclear-Tech-GIT">☢️ NTNH NTM fork</a><br>
+      <a href="https://github.com/NTNewHorizons/NTNH-Guide-Pack">📚 NTNH Guide Pack</a><br>
+      <a href="https://github.com/NTNewHorizons/NTNH-Modernity">🎨 NTNH Modernity</a><br>
       <a href="https://github.com/NTNewHorizons/NTNH-Docs/blob/main/DEVELOPERS_CODE_OF_CONDUCT">📜 Developer's Code of Conduct</a><br>
-      <a href="https://crowdin.com/project/ntnh">📑 Translation project on Crowdin</a><br>
     </td>
   </tr>
 </table>
