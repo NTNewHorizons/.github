@@ -27,7 +27,7 @@
       <a href="https://github.com/NTNewHorizons/NTNH/releases">📋 Releases & changelog</a><br>
       <a href="https://ntnewhorizons.com/guide">📖 Getting started guide</a><br>
       <a href="https://ntnewhorizons.com/about">📜 Story & philosophy</a><br>
-      <a href="https://github.com/NTNewHorizons/Hbm-s-Nuclear-Tech-GIT">☢️ NTNH NTM fork</a><br>
+      <a href="https://github.com/NTNewHorizons/NTNH">☢️ NTNH main repo</a><br>
       <a href="https://github.com/NTNewHorizons/NTNH-Guide-Pack">📚 NTNH Guide Pack</a><br>
       <a href="https://github.com/NTNewHorizons/NTNH-Modernity">🎨 NTNH Modernity</a><br>
       <a href="https://github.com/NTNewHorizons/NTNH-Docs/blob/main/DEVELOPERS_CODE_OF_CONDUCT">📜 Developer's Code of Conduct</a><br>
