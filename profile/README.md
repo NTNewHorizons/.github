@@ -2,7 +2,7 @@
     <img width="20%" max-height="20%" src="/profile/logo.png">
 </p>
 
-<h2 align="center">Welcome to the Nuclear Tech: New Horizons Github organisation!</h2>
+<h2 align="center">Welcome to the Nuclear Tech: New Horizons Github organization!</h2>
 
 <table align="center">
   <tr>
