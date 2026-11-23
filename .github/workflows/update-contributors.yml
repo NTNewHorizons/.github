@@ -174,7 +174,12 @@ jobs:
       - name: Wrap Crowdin table in .github with centered div (and exclude users)
         run: |
           perl -i -0777 -pe '
-            s/<!-- CROWDIN_CONTRIBUTORS_START -->(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/my $content = $1; $content =~ s{<td[^>]*>.*?(?:Bufka2011|BufkaSecond).*?<\/td>}{}gs; $content =~ s/<table>/<table style="margin-left: auto; margin-right: auto;">/; "<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align=\"center\">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$content\n<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->"/gse
+            s{<!-- CROWDIN_CONTRIBUTORS_START -->(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->}{
+              my $content = $1;
+              $content =~ s{<td\b[^>]*>.*?\b(?:Bufka2011|BufkaSecond)\b.*?</td>}{}gs;
+              $content =~ s{<table\b}{<table style="margin-left: auto; margin-right: auto;"};
+              qq{<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟</h2>\n  \n$content\n</div>\n<!-- CROWDIN_CONTRIBUTORS_END -->}
+            }gse
           ' github-repo/profile/README.md
 
       # Step 5: Generate Crowdin contributors table for NTNH
@@ -196,7 +201,12 @@ jobs:
       - name: Wrap Crowdin table in NTNH with centered div (and exclude users)
         run: |
           perl -i -0777 -pe '
-            s/<!-- CROWDIN_CONTRIBUTORS_START -->(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/my $content = $1; $content =~ s{<td[^>]*>.*?(?:Bufka2011|BufkaSecond).*?<\/td>}{}gs; $content =~ s/<table>/<table style="margin-left: auto; margin-right: auto;">/; "<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align=\"center\">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$content\n<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->"/gse
+            s{<!-- CROWDIN_CONTRIBUTORS_START -->(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->}{
+              my $content = $1;
+              $content =~ s{<td\b[^>]*>.*?\b(?:Bufka2011|BufkaSecond)\b.*?</td>}{}gs;
+              $content =~ s{<table\b}{<table style="margin-left: auto; margin-right: auto;"};
+              qq{<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟</h2>\n  \n$content\n</div>\n<!-- CROWDIN_CONTRIBUTORS_END -->}
+            }gse
           ' ntnh-repo/README.md
 
       # Step 6: Generate Crowdin contributors table for Translations
@@ -218,7 +228,12 @@ jobs:
       - name: Wrap Crowdin table in Translations with centered div (and exclude users)
         run: |
           perl -i -0777 -pe '
-            s/<!-- CROWDIN_CONTRIBUTORS_START -->(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/my $content = $1; $content =~ s{<td[^>]*>.*?(?:Bufka2011|BufkaSecond).*?<\/td>}{}gs; $content =~ s/<table>/<table style="margin-left: auto; margin-right: auto;">/; "<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align=\"center\">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$content\n<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->"/gse
+            s{<!-- CROWDIN_CONTRIBUTORS_START -->(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->}{
+              my $content = $1;
+              $content =~ s{<td\b[^>]*>.*?\b(?:Bufka2011|BufkaSecond)\b.*?</td>}{}gs;
+              $content =~ s{<table\b}{<table style="margin-left: auto; margin-right: auto;"};
+              qq{<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟</h2>\n  \n$content\n</div>\n<!-- CROWDIN_CONTRIBUTORS_END -->}
+            }gse
           ' translations-repo/README.md
 
       # Step 7: Commit and push all changes to .github repository
