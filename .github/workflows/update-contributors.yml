@@ -119,7 +119,7 @@ jobs:
                tableRows.push(`<tr>${cells}</tr>`);
              }
              
-             const html = `<div align="center">\n\n<h2 style="text-align:center">🌟 Our Amazing Contributors 🌟</h2>\n\n<table>${tableRows.join('\n')}</table>\n\n</div>\n`;
+             const html = `<div align="center">\n\n<h2 style="text-align:center">🌟 Our Amazing Contributors 🌟</h2>\n\n<table style="margin-left: auto; margin-right: auto;">${tableRows.join('\n')}</table>\n\n</div>\n`;
             
             // Read and update README files
             const fs = require('fs');
@@ -171,11 +171,10 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
-      - name: Wrap Crowdin table in .github with centered div
+      - name: Wrap Crowdin table in .github with centered div (and exclude users)
         run: |
-          perl -i -pe '
-            BEGIN { $/ = undef; }
-            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
+          perl -i -0777 -pe '
+            s/<!-- CROWDIN_CONTRIBUTORS_START -->(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/my $content = $1; $content =~ s{<td[^>]*>.*?(?:Bufka2011|BufkaSecond).*?<\/td>}{}gs; $content =~ s/<table>/<table style="margin-left: auto; margin-right: auto;">/; "<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align=\"center\">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$content\n<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->"/gse
           ' github-repo/profile/README.md
 
       # Step 5: Generate Crowdin contributors table for NTNH
@@ -194,11 +193,10 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
-      - name: Wrap Crowdin table in NTNH with centered div
+      - name: Wrap Crowdin table in NTNH with centered div (and exclude users)
         run: |
-          perl -i -pe '
-            BEGIN { $/ = undef; }
-            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
+          perl -i -0777 -pe '
+            s/<!-- CROWDIN_CONTRIBUTORS_START -->(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/my $content = $1; $content =~ s{<td[^>]*>.*?(?:Bufka2011|BufkaSecond).*?<\/td>}{}gs; $content =~ s/<table>/<table style="margin-left: auto; margin-right: auto;">/; "<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align=\"center\">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$content\n<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->"/gse
           ' ntnh-repo/README.md
 
       # Step 6: Generate Crowdin contributors table for Translations
@@ -217,11 +215,10 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
-      - name: Wrap Crowdin table in Translations with centered div
+      - name: Wrap Crowdin table in Translations with centered div (and exclude users)
         run: |
-          perl -i -pe '
-            BEGIN { $/ = undef; }
-            s/<!-- CROWDIN_CONTRIBUTORS_START -->\n(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$1<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->/gs
+          perl -i -0777 -pe '
+            s/<!-- CROWDIN_CONTRIBUTORS_START -->(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->/my $content = $1; $content =~ s{<td[^>]*>.*?(?:Bufka2011|BufkaSecond).*?<\/td>}{}gs; $content =~ s/<table>/<table style="margin-left: auto; margin-right: auto;">/; "<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align=\"center\">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟<\/h2>\n  \n$content\n<\/div>\n<!-- CROWDIN_CONTRIBUTORS_END -->"/gse
           ' translations-repo/README.md
 
       # Step 7: Commit and push all changes to .github repository
