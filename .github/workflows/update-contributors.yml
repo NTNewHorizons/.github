@@ -47,6 +47,7 @@ jobs:
           github-token: ${{ secrets.UNIVERSAL_FINE }}
           script: |
             const org = 'NTNewHorizons';
+            const fs = require('fs');
             
             // Fetch all repositories in the organization
             const { data: repos } = await github.rest.repos.listForOrg({
@@ -63,7 +64,6 @@ jobs:
             let skippedForks = 0;
             
             for (const repo of repos) {
-              // Skip forked repositories
               if (repo.fork) {
                 console.log(`Skipping forked repository: ${repo.name}`);
                 skippedForks++;
@@ -91,38 +91,30 @@ jobs:
                     }
                   }
                 }
-                
-                console.log(`Fetched ${contributors.length} contributors from ${repo.name}`);
                 processedRepos++;
               } catch (error) {
                 console.log(`Error fetching contributors for ${repo.name}: ${error.message}`);
               }
             }
             
-            console.log(`\nProcessed ${processedRepos} repositories, skipped ${skippedForks} forks`);
-            
             // Sort by contributions (descending)
             const sortedContributors = Array.from(contributorMap.values())
               .sort((a, b) => b.contributions - a.contributions);
             
-            console.log(`Total unique contributors: ${sortedContributors.length}`);
+            // Generate HTML table (7 per row)
+            const contributorsPerRow = 7;
+            const tableRows = [];
             
-             // Generate HTML table (7 per row, no height attr to avoid GitHub display:block inject)
-             const contributorsPerRow = 7;
-             const tableRows = [];
-             
-             for (let i = 0; i < sortedContributors.length; i += contributorsPerRow) {
-               const rowContributors = sortedContributors.slice(i, i + contributorsPerRow);
-               const cells = rowContributors.map(c => 
-                 `<td align="center"><a href="${c.html_url}"><img src="${c.avatar_url}" width="50" alt="${c.login}" style="border-radius:50%;margin:5px;"/></a><br/><sub><b>${c.login}</b></sub><br/><span>${c.contributions} 🏆</span></td>`
-               ).join('\n');
-               tableRows.push(`<tr>${cells}</tr>`);
-             }
-             
-             const html = `<div align="center">\n\n<h2 style="text-align:center">🌟 Our Amazing Contributors 🌟</h2>\n\n<table style="margin-left: auto; margin-right: auto;">${tableRows.join('\n')}</table>\n\n</div>\n`;
+            for (let i = 0; i < sortedContributors.length; i += contributorsPerRow) {
+              const rowContributors = sortedContributors.slice(i, i + contributorsPerRow);
+              const cells = rowContributors.map(c => 
+                `<td align="center"><a href="${c.html_url}"><img src="${c.avatar_url}" width="50" alt="${c.login}" style="border-radius:50%;margin:5px;"/></a><br/><sub><b>${c.login}</b></sub><br/><span>${c.contributions} 🏆</span></td>`
+              ).join('\n');
+              tableRows.push(`<tr>${cells}</tr>`);
+            }
             
-            // Read and update README files
-            const fs = require('fs');
+            // Note: align="center" on the table tag is crucial for GitHub Markdown rendering
+            const html = `<div align="center">\n<h2>🌟 Our Amazing Contributors 🌟</h2>\n<table align="center">\n${tableRows.join('\n')}\n</table>\n</div>\n`;
             
             const readmePaths = [
               'github-repo/profile/README.md',
@@ -132,8 +124,6 @@ jobs:
             for (const readmePath of readmePaths) {
               try {
                 let readmeContent = fs.readFileSync(readmePath, 'utf8');
-                
-                // Replace content between markers
                 const startMarker = '<!-- CONTRIBUTORS_START -->';
                 const endMarker = '<!-- CONTRIBUTORS_END -->';
                 const startIndex = readmeContent.indexOf(startMarker);
@@ -144,7 +134,7 @@ jobs:
                   const after = readmeContent.substring(endIndex);
                   readmeContent = before + '\n' + html + after;
                   fs.writeFileSync(readmePath, readmeContent);
-                  console.log(`Successfully updated ${readmePath} with contributors`);
+                  console.log(`Successfully updated ${readmePath} with code contributors`);
                 } else {
                   console.log(`Could not find contributor markers in ${readmePath}`);
                 }
@@ -171,17 +161,6 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
-      - name: Wrap Crowdin table in .github with centered div (and exclude users)
-        run: |
-          perl -i -0777 -pe '
-            s{<!-- CROWDIN_CONTRIBUTORS_START -->(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->}{
-              my $content = $1;
-              $content =~ s{<td\b[^>]*>.*?\b(?:Bufka2011|BufkaSecond)\b.*?</td>}{}gs;
-              $content =~ s{<table\b}{<table style="margin-left: auto; margin-right: auto;"};
-              qq{<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟</h2>\n  \n$content\n</div>\n<!-- CROWDIN_CONTRIBUTORS_END -->}
-            }gse
-          ' github-repo/profile/README.md
-
       # Step 5: Generate Crowdin contributors table for NTNH
       - name: Generate Crowdin Contributors for NTNH
         uses: andrii-bodnar/action-crowdin-contributors@v3
@@ -197,17 +176,6 @@ jobs:
         env:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
-
-      - name: Wrap Crowdin table in NTNH with centered div (and exclude users)
-        run: |
-          perl -i -0777 -pe '
-            s{<!-- CROWDIN_CONTRIBUTORS_START -->(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->}{
-              my $content = $1;
-              $content =~ s{<td\b[^>]*>.*?\b(?:Bufka2011|BufkaSecond)\b.*?</td>}{}gs;
-              $content =~ s{<table\b}{<table style="margin-left: auto; margin-right: auto;"};
-              qq{<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟</h2>\n  \n$content\n</div>\n<!-- CROWDIN_CONTRIBUTORS_END -->}
-            }gse
-          ' ntnh-repo/README.md
 
       # Step 6: Generate Crowdin contributors table for Translations
       - name: Generate Crowdin Contributors for Translations
@@ -225,18 +193,56 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
-      - name: Wrap Crowdin table in Translations with centered div (and exclude users)
+      # Step 7: Post-process Crowdin tables (Exclude users, Center, Fix Markdown)
+      - name: Clean up Crowdin tables and center them
         run: |
-          perl -i -0777 -pe '
-            s{<!-- CROWDIN_CONTRIBUTORS_START -->(.*?)<!-- CROWDIN_CONTRIBUTORS_END -->}{
-              my $content = $1;
-              $content =~ s{<td\b[^>]*>.*?\b(?:Bufka2011|BufkaSecond)\b.*?</td>}{}gs;
-              $content =~ s{<table\b}{<table style="margin-left: auto; margin-right: auto;"};
-              qq{<!-- CROWDIN_CONTRIBUTORS_START -->\n<div align="center">\n  <h2>🌟 Our Wonderful Translation Contributors 🌟</h2>\n  \n$content\n</div>\n<!-- CROWDIN_CONTRIBUTORS_END -->}
-            }gse
-          ' translations-repo/README.md
+          node - <<'EOF'
+          const fs = require('fs');
+          
+          const files = [
+            'github-repo/profile/README.md',
+            'ntnh-repo/README.md',
+            'translations-repo/README.md'
+          ];
+          const excludeUsers = ['Bufka2011', 'BufkaSecond'];
 
-      # Step 7: Commit and push all changes to .github repository
+          for (const file of files) {
+            if (!fs.existsSync(file)) continue;
+            let content = fs.readFileSync(file, 'utf8');
+
+            const startMarker = '<!-- CROWDIN_CONTRIBUTORS_START -->';
+            const endMarker = '<!-- CROWDIN_CONTRIBUTORS_END -->';
+            const startIdx = content.indexOf(startMarker);
+            const endIdx = content.indexOf(endMarker);
+
+            if (startIdx !== -1 && endIdx !== -1) {
+              let section = content.substring(startIdx + startMarker.length, endIdx);
+
+              // 1. Remove excluded users' <td> blocks
+              for (const user of excludeUsers) {
+                // Matches a <td> block containing the username, spanning multiple lines
+                const regex = new RegExp(`<td[^>]*>[\\s\\S]*?${user}[\\s\\S]*?<\\/td>`, 'gi');
+                section = section.replace(regex, '');
+              }
+
+              // 2. Strip leading whitespace to prevent Markdown code blocks
+              section = section.split('\n').map(line => line.trimStart()).join('\n');
+
+              // 3. Center the table
+              section = section.replace(/<table[^>]*>/gi, '<table align="center">');
+
+              // 4. Wrap in a tightly formatted centered div
+              const newSection = `\n<div align="center">\n<h2>🌟 Our Wonderful Translation Contributors 🌟</h2>\n${section}\n</div>\n`;
+
+              // Reassemble the file
+              content = content.substring(0, startIdx + startMarker.length) + newSection + content.substring(endIdx);
+              fs.writeFileSync(file, content);
+              console.log(`Successfully processed and cleaned ${file}`);
+            }
+          }
+          EOF
+
+      # Step 8: Commit and push all changes to .github repository
       - name: Commit and push .github repository
         run: |
           cd github-repo
@@ -251,7 +257,7 @@ jobs:
             git push
           fi
 
-      # Step 8: Commit and push all changes to NTNH repository
+      # Step 9: Commit and push all changes to NTNH repository
       - name: Commit and push NTNH repository
         run: |
           cd ntnh-repo
@@ -266,7 +272,7 @@ jobs:
             git push
           fi
 
-      # Step 9: Commit and push all changes to NTNH-Translations repository
+      # Step 10: Commit and push all changes to NTNH-Translations repository
       - name: Commit and push NTNH-Translations repository
         run: |
           cd translations-repo
